@@ -1,5 +1,5 @@
 <script lang="ts">
-	import logo from '$lib/assets/logo.png';
+	import logo from '$lib/assets/logo.svg';
 	import Github from '~icons/tabler/brand-github';
 	import Discord from '~icons/tabler/brand-discord';
 	import Users from '~icons/tabler/users';
@@ -17,10 +17,27 @@
 	import MQTT from '~icons/tabler/topology-star-3';
 	import NTP from '~icons/tabler/clock-check';
 	import Metrics from '~icons/tabler/report-analytics';
+	import Moon from '~icons/tabler/moon';
+	import Sun from '~icons/tabler/sun';
 	import { page } from '$app/state';
 	import { user } from '$lib/stores/user';
 
 	let { closeMenu } = $props();
+
+	// Initialize theme from localStorage or default to 'emerald' (light theme)
+	let isDarkMode = $state(localStorage.getItem('theme') === 'forest');
+
+	// Set initial theme
+	$effect(() => {
+		document.documentElement.setAttribute('data-theme', isDarkMode ? 'forest' : 'emerald');
+	});
+
+	function toggleTheme() {
+		isDarkMode = !isDarkMode;
+		const theme = isDarkMode ? 'forest' : 'emerald';
+		localStorage.setItem('theme', theme);
+		document.documentElement.setAttribute('data-theme', theme);
+	}
 
 	const github = { href: 'https://github.com/' + page.data.github, active: true };
 
@@ -45,9 +62,9 @@
 
 	let menuItems = $state([
 		{
-			title: 'Demo App',
+			title: 'Hydro Control',
 			icon: Control,
-			href: '/demo',
+			href: '/control',
 			feature: true
 		},
 		{
@@ -147,7 +164,7 @@
 		class="rounded-box mb-4 flex items-center hover:scale-[1.02] active:scale-[0.98]"
 		onclick={() => setActiveMenuItem('')}
 	>
-		<img src={logo} alt="Logo" class="h-12 w-12" />
+		<img src={logo} alt="Logo" class="h-12 w-auto aspect-auto" />
 		<h1 class="px-4 text-2xl font-bold">{page.data.appName}</h1>
 	</a>
 	<ul class="menu rounded-box menu-vertical flex-nowrap overflow-y-auto">
@@ -194,6 +211,19 @@
 
 	<div class="flex-col"></div>
 	<div class="flex-grow"></div>
+
+	<!-- Theme toggle -->
+	<div class="flex justify-end px-2 py-2">
+		<button class="btn btn-ghost btn-sm gap-2" onclick={toggleTheme}>
+			{#if isDarkMode}
+				<Sun class="h-5 w-5" />
+				<span class="text-sm">Light</span>
+			{:else}
+				<Moon class="h-5 w-5" />
+				<span class="text-sm">Dark</span>
+			{/if}
+		</button>
+	</div>
 
 	{#if page.data.features.security}
 		<div class="flex items-center">

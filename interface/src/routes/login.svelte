@@ -1,5 +1,5 @@
 <script lang="ts">
-	import logo from '$lib/assets/logo.png';
+	import logo from '$lib/assets/logo.svg';
 	import InputPassword from '$lib/components/InputPassword.svelte';
 	import { user } from '$lib/stores/user';
 	import { notifications } from '$lib/components/toasts/notifications';
@@ -52,13 +52,13 @@
 
 <div class="hero from-primary/30 to-secondary/30 min-h-screen bg-gradient-to-br">
 	<div
-		class="card lg:card-side bg-base-100 shadow-primary face shadow-2xl {loginFailed
+		class="card lg:card-side bg-base-100 shadow-secondary face shadow-2xl {loginFailed
 			? 'failure border-error border-2'
 			: ''}"
 		in:fly={{ delay: 200, y: 100, duration: 500 }}
 		out:fade={{ duration: 200 }}
 	>
-		<figure class="bg-base-200"><img src={logo} alt="Logo" class="h-auto w-48 lg:w-64" /></figure>
+		<figure class="bg-base-200"><img src={logo} alt="Logo" class="h-auto w-48 lg:w-64 aspect-auto" /></figure>
 		<div class="card-body w-80">
 			<h2 class="card-title text-2xl">Login</h2>
 			<form class="form-control w-full max-w-xs">

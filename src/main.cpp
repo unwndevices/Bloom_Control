@@ -13,39 +13,49 @@
  **/
 
 #include <ESP32SvelteKit.h>
-#include <LightMqttSettingsService.h>
-#include <LightStateService.h>
+#include <RelayMqttSettingsService.h>
+#include <RelayStateService.h>
+#include <TempMqttService.h>
+#include <TempStateService.h>
 #include <PsychicHttpServer.h>
-
 #define SERIAL_BAUD_RATE 115200
 
 PsychicHttpServer server;
 
 ESP32SvelteKit esp32sveltekit(&server, 120);
 
-LightMqttSettingsService lightMqttSettingsService = LightMqttSettingsService(&server,
+RelayMqttSettingsService relayMqttSettingsService = RelayMqttSettingsService(&server,
                                                                              &esp32sveltekit);
 
-LightStateService lightStateService = LightStateService(&server,
+RelayStateService relayStateService = RelayStateService(&server,
                                                         &esp32sveltekit,
-                                                        &lightMqttSettingsService);
+                                                        &relayMqttSettingsService);
 
+TempMqttService tempMqttService = TempMqttService(&server,
+                                                  &esp32sveltekit);
+
+TempStateService tempStateService = TempStateService(&server,
+                                                     &esp32sveltekit);
 void setup()
 {
     // start serial and filesystem
     Serial.begin(SERIAL_BAUD_RATE);
+    Serial.setDebugOutput(true);
 
     // start ESP32-SvelteKit
     esp32sveltekit.begin();
 
     // load the initial light settings
-    lightStateService.begin();
+    relayStateService.begin();
     // start the light service
-    lightMqttSettingsService.begin();
+    relayMqttSettingsService.begin();
+
+    tempStateService.begin();
+    tempMqttService.begin();
 }
 
 void loop()
 {
-    // Delete Arduino loop task, as it is not needed in this example
-    vTaskDelete(NULL);
+    tempStateService.loop();
+    vTaskDelay(100);
 }
